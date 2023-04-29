@@ -113,6 +113,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install tar and zip utilities
+          command: |
+            yum -y install tar gzip
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -136,6 +140,8 @@ jobs:
                                     --query 'Reservations[*].Instances[*].PublicDnsName' \
                                     --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
+            # show content of inventory.txt file
+            cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
