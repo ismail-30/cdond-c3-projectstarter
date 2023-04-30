@@ -311,4 +311,4 @@ workflows:
       # - deploy-frontend:
       #      requires: [run-migrations]
       - check-db-connection-and-run-migrations:
-          requires: [deploy-infrastructure]
+          requires: [configure-infrastructure]
