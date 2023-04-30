@@ -224,10 +224,52 @@ jobs:
             then
                 curl https://kvdb.io/${KVDB_BUCKET_ID}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      - destroy-environment:
-          Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
       - revert-migrations:
           Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
+      - destroy-environment:
+          Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
+
+  # deploy-frontend:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           yum install -y tar gzip curl
+  #           curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+  #           yum install -y nodejs              
+  #     - run:
+  #         name: Get backend url
+  #         command: |
+  #           export BACKEND_PUBLIC_IP=$(aws --region us-west-2 ec2 describe-instances \
+  #                                          --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+  #                                          --query 'Reservations[*].Instances[*].PublicDnsName' \
+  #                                          --output text)
+  #           export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+  #           echo "${API_URL}"
+  #           echo API_URL="http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
+  #           cat frontend/.env
+      
+  #     - persist_to_workspace:
+  #         root: ~/
+  #         paths:
+  #           - project/frontend/.env
+      
+  #     - run:
+  #         name: Deploy frontend objects
+  #         command: |
+  #           cd frontend
+  #           npm install
+  #           npm run build
+  #           tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+  #           aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+  #     # Here's where you will add some code to rollback on failure      
+  #     - revert-migrations:
+  #         Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
+  #     - destroy-environment:
+  #         Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}   
 
 workflows:
   default:
@@ -251,3 +293,5 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+           requires: [run-migrations]
