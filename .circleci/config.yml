@@ -208,7 +208,7 @@ jobs:
 
   check-db-connection-and-run-migrations:
     docker:
-      - image: circleci/node:13.8.0-browsers
+      - image: circleci/node:16.13-browsers
     steps:
       - checkout
       - run:
@@ -216,7 +216,7 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y postgresql-client
-            export PGPASSWORD=<DB_PASSWORD>
+            export PGPASSWORD=$TYPEORM_PASSWORD
             psql -h $TYPEORM_HOST -p $TYPEORM_PORT -U &TYPEORM_USERNAME -d $TYPEORM_DATABASE -c "SELECT version();"
 
 
