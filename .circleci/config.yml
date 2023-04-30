@@ -208,12 +208,13 @@ jobs:
 
   check-db-connection-and-run-migrations:
     docker:
-      - image: circleci/postgres:14.6
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
           name: Install PostgreSQL client and test database connection
           command: |
+            sudo apt-get install -y postgresql-client
             export PGPASSWORD=$TYPEORM_PASSWORD
             psql -h $TYPEORM_HOST -p $TYPEORM_PORT -U &TYPEORM_USERNAME -d $TYPEORM_DATABASE -c "SELECT version();"
 
