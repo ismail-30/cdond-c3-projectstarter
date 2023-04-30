@@ -156,7 +156,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["b2:78:e5:97:f0:19:d0:1d:ce:c6:b9:ee:0e:c5:7d:7f"]
+          fingerprints: ["94:ac:63:1d:ba:1e:98:a2:b0:b6:1f:ca:28:16:9e:a6"]
       - attach_workspace:
           at: ~/
       - run:
@@ -169,7 +169,17 @@ jobs:
           name: Configure server
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=30   
+            export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=30  
+            echo ENVIROMENT=production > "backend/.env"      
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
+            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> "backend/.env"          
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"      
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"            
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"      
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"     
+            echo "CONTENT OF backend/.env"      
+            cat backend/.env   
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml -v 
       - destroy-environment:
@@ -193,5 +203,5 @@ workflows:
           filters:
             branches:
               only: [master]
-      #- configure-infrastructure:
-      #    requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
