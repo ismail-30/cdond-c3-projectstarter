@@ -10,11 +10,11 @@
     autoremove: yes
 
 - name: "install python for Ansible."
-    become: yes
-    apt:
-      name: "python3-pip"
-      update_cache: yes
-      state: present
+  become: yes
+  apt:
+    name: "python3-pip"
+    update_cache: yes
+    state: present
 
 - name: "Install npm and nodejs"
   become: true
