@@ -177,7 +177,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["94:ac:63:1d:ba:1e:98:a2:b0:b6:1f:ca:28:16:9e:a6"]
+          fingerprints: ["38:ab:cd:17:8b:36:ff:20:1e:71:2b:7e:c4:7f:84:45"]
       - attach_workspace:
           at: ~/
       - run:
@@ -205,20 +205,6 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml -v 
       - destroy-environment:
           Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
-
-  check-db-connection-and-run-migrations:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run:
-          name: Install PostgreSQL client and test database connection
-          command: |
-            sudo apt-get install -y postgresql-client
-            export PGPASSWORD=$TYPEORM_PASSWORD
-            psql -h $TYPEORM_HOST -p $TYPEORM_PORT -U &TYPEORM_USERNAME -d $TYPEORM_DATABASE -c "SELECT version();"
-
-
 
   # run-migrations:
   #   docker:
@@ -309,5 +295,3 @@ workflows:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
       #      requires: [run-migrations]
-      - check-db-connection-and-run-migrations:
-          requires: [configure-infrastructure]
