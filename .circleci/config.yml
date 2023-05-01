@@ -184,13 +184,14 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip ansible
-            pip install awscli
+            pip install --upgrade awscli paramiko
 
       - run:
           name: Configure server
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=30  
+            export ANSIBLE_PARAMIKO_BANNER_TIMEOUT=60  
+            export ANSIBLE_CONNECTION_PLUGIN=ssh
             echo ENVIROMENT=production > "backend/.env"      
             echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/.env"
