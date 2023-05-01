@@ -173,7 +173,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.11-rc-alpine
     steps:
       - checkout
       - add_ssh_keys:
@@ -184,7 +184,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip ansible
-            pip install --upgrade awscli paramiko
+            pip install awscli
 
       - run:
           name: Configure server
@@ -204,7 +204,7 @@ jobs:
             cat backend/.env  
             ls ~/.ssh/ 
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml -v --private-key=~/.ssh/id_rsa_3f024c375b22f56be89aea5213d3c21e
+            ansible-playbook -i inventory.txt configure-server.yml -v
       - destroy-environment:
           Workflow_ID: ${CIRCLE_WORKFLOW_ID:0:7}  
 
